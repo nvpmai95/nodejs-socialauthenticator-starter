@@ -1,4 +1,4 @@
-let isLoggedIn = require('./middleware/isLoggedIn')
+let isLoggedIn = require('./middlewares/isLoggedIn')
 
 module.exports = (app) => {
   let passport = app.passport

@@ -1,4 +1,5 @@
 let passport = require('passport')
+let LocalStrategy = require('passport-local')
 let wrap = require('nodeifyit')
 let User = require('../models/user')
 
@@ -66,7 +67,7 @@ function configure(CONFIG) {
     failureFlash: true
   }, wrap(localSignupHandler, {spread: true}))
 
-  passport.use('local-login', localLoginStrategy)
+  passport.use('local-login', localStrategy)
   passport.use('local-signup', localSignupStrategy)
 
   /**
