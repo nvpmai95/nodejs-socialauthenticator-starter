@@ -2,9 +2,14 @@ let mongoose = require('mongoose')
 
 let userSchema = mongoose.Schema({
   local: {
-    email: String,
-    password: String
-  },
+    email: {
+      type: String,
+      required: true
+    },
+    password: {
+      type: String,
+      required: true
+    }
   /* TODO: Add social schemas
   facebook: {
     id: ...,
@@ -12,6 +17,7 @@ let userSchema = mongoose.Schema({
     ...
   }
   */
+  }
 })
 
 userSchema.methods.generateHash = async function(password) {

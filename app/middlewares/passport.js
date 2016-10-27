@@ -2,6 +2,7 @@ let passport = require('passport')
 let LocalStrategy = require('passport-local')
 let wrap = require('nodeifyit')
 let User = require('../models/user')
+let FacebookStrategy = require('passport-facebook')
 
 // Handlers
 async function localAuthHandler(email, password) {
@@ -55,20 +56,6 @@ function configure(CONFIG) {
     return await User.promise.findById(id)
   }))
 
-  /**
-   * Local Auth
-   */
-  let localStrategy = new LocalStrategy({
-    usernameField: 'email', // Use "email" instead of "username"
-    failureFlash: true // Enable session-based error logging
-  }, wrap(localAuthHandler, {spread: true}))
-  let localSignupStrategy = new LocalStrategy({
-    usernameField: 'email',
-    failureFlash: true
-  }, wrap(localSignupHandler, {spread: true}))
-
-  passport.use('local-login', localStrategy)
-  passport.use('local-signup', localSignupStrategy)
 
   /**
    * 3rd-Party Auth

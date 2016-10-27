@@ -8,7 +8,8 @@ let bodyParser = require('body-parser')
 let session = require('express-session')
 let mongoose = require('mongoose')
 let flash = require('connect-flash')
-
+let passport = require('passport')
+let FacebookStrategy = require('passport-facebook')
 let passportMiddleware = require('./app/middlewares/passport')
 
 const NODE_ENV = process.env.NODE_ENV
@@ -20,8 +21,31 @@ const CONFIG = require('./config')
 let app = express(),
   port = process.env.PORT || 8000
 
-passportMiddleware.configure(CONFIG.auth[NODE_ENV])
-app.passport = passportMiddleware.passport
+passport.use(new FacebookStrategy({
+    clientID: '1020536348055574',
+    clientSecret: 'a34da8e0168b841b041221e835345d55',
+    callbackURL: "http://socialauthenticator.com:8000/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+
+  /**
+   * Local Auth
+   */
+  app.get('/auth/facebook',
+  passport.authenticate('facebook'));
+
+  app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', { failureRedirect: '/login' }),
+    function(req, res) {
+      // Successful authentication, redirect home.
+      res.redirect('/');
+  });
+
 
 // connect to the database
 mongoose.connect(CONFIG.database.url)
@@ -43,14 +67,14 @@ app.use(session({
 }))
 
 // Setup passport authentication middleware
-app.use(app.passport.initialize())
+//app.use(app.passport.initialize())
 // persistent login sessions
-app.use(app.passport.session())
+//app.use(app.passport.session())
 // Flash messages stored in session
 app.use(flash())
 
 // configure routes
-require('./app/routes')(app)
+// require('./app/routes')(app)
 
 /**
  * Start Setup
